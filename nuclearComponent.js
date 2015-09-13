@@ -39,7 +39,7 @@ function createComponent(Component, getDataBindings) {
       if (!getDataBindings) {
         return null
       }
-      return getState(this.context.reactor, getDataBindings())
+      return getState(this.context.reactor, getDataBindings(this.props))
     },
 
     componentDidMount: function() {
@@ -48,7 +48,7 @@ function createComponent(Component, getDataBindings) {
       }
       var component = this
       component.__nuclearUnwatchFns = []
-      each(getDataBindings(), function(getter, key) {
+      each(getDataBindings(this.props), function(getter, key) {
         var unwatchFn = component.context.reactor.observe(getter, function(val) {
           var newState = {}
           newState[key] = val
@@ -83,12 +83,12 @@ function createComponent(Component, getDataBindings) {
  * as props to wrapped component
  *
  * Example:
- *   var WrappedComponent = nuclearComponent(Component, function() {
+ *   var WrappedComponent = nuclearComponent(Component, function(props) {
  *     return { counter: 'counter' };
  *   );
  *
  * Also supports the decorator pattern:
- *   @nuclearComponent(() => {
+ *   @nuclearComponent((props) => {
  *     return { counter: 'counter' }
  *   })
  *   class BaseComponent extends React.Component {

@@ -182,4 +182,33 @@ describe('nuclear component', () => {
     React.render(<SomeES5Stuff reactor={fakeReactor}/>, div)
     React.unmountComponentAtNode(div)
   })
+
+  it('should provide access to the props easily', () => {
+    const div = document.createElement('div')
+
+    const fakeReactor = {
+      evaluate(key) {
+        if (key !== 'through1337') {
+          throw new Error('wrong key')
+        }
+      },
+      observe() {
+        return () => {}
+      },
+    }
+
+    let SomeES5Stuff = createClass({
+      render() {
+        return <div/>
+      },
+    })
+
+    SomeES5Stuff = nuclearComponent(SomeES5Stuff, function(props) {
+      return { pass: 'through' + props.foo }
+    })
+    SomeES5Stuff = provideReactor(SomeES5Stuff)
+
+    React.render(<SomeES5Stuff foo="1337" reactor={fakeReactor}/>, div)
+    React.unmountComponentAtNode(div)
+  })
 })
